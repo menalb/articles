@@ -1,0 +1,21 @@
+﻿@page "/"
+
+<PageTitle>Vehicles</PageTitle>
+
+<h1>All vehicles</h1>
+
+@foreach (var manufacturer in ManufacturerWithVehicles)
+{
+    <h3>@manufacturer.name</h3>
+    <ul>
+@foreach (var vehicle in manufacturer.vehicles)
+{
+    <li>@vehicle.name</li>
+}
+    </ul>
+}
+
+@code {
+    private IEnumerable<Manufacturer> ManufacturerWithVehicles { get; set; } = DB.Manufacturers;
+
+}
