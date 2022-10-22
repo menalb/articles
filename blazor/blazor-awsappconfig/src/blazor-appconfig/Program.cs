@@ -8,8 +8,8 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient
-{
-    BaseAddress = new Uri("")
+{    
+    BaseAddress = new Uri(builder.Configuration["Backend:FlagsApiUrl"] ?? throw new ArgumentNullException("Configuration"))
 });
 
 builder.Services.AddSingleton<RecipesQuery>();
