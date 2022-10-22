@@ -1,0 +1,16 @@
+﻿<ul>
+    @foreach (var step in Steps)
+    {
+        <li>
+            <div>@step.Number </div>
+            <div>
+                @step.Instructions
+            </div>
+        </li>
+    }
+</ul>
+
+@code {
+    [Parameter]
+    public IEnumerable<Step> Steps { get; set; } = new List<Step>();
+}

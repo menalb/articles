@@ -1,21 +1,20 @@
 ﻿@page "/"
 
-<PageTitle>Vehicles</PageTitle>
+<PageTitle>Recepies</PageTitle>
 
-<h1>All vehicles</h1>
+<h1>All Recpes</h1>
 
-@foreach (var manufacturer in ManufacturerWithVehicles)
+<ul class="list-group">
+@foreach (var recipie in Recipes)
 {
-    <h3>@manufacturer.name</h3>
-    <ul>
-@foreach (var vehicle in manufacturer.vehicles)
-{
-    <li>@vehicle.name</li>
+    <li class="list-group-item">
+        <NavLink title="@recipie.Id" class="nav-link" href=@($"recipe/{recipie.Id}")>
+            @recipie.Name
+        </NavLink>
+    </li>
 }
-    </ul>
-}
+</ul>
 
 @code {
-    private IEnumerable<Manufacturer> ManufacturerWithVehicles { get; set; } = DB.Manufacturers;
-
+    private IEnumerable<Recipe> Recipes { get; set; } = DB.Recipes;
 }

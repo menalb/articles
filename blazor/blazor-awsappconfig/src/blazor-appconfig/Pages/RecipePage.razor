@@ -1,0 +1,54 @@
+﻿@page "/recipe/{RecipeId}"
+@using blazor_appconfig.Components
+@using blazor_appconfig.Services
+@inject RecipesQuery Query;
+@inject FlagsStorageService Flags;
+
+<PageTitle>Recipes</PageTitle>
+
+<NavLink title="Back to recipes" class="nav-link" href="/">
+    Back
+</NavLink>
+
+@if (Recipe == null)
+{
+    <em>Recipe available</em>
+}
+else
+{
+    <h1>@Recipe.Name</h1>
+
+    <h2>Ingredients</h2>
+    <ul>
+        @foreach (var ingredient in Recipe.Ingredients)
+        {
+            <li>
+                @ingredient.Name - @ingredient.Quantity
+            </li>
+        }
+    </ul>
+
+    <h2>Steps</h2>
+    @if (CanShowStepsWizards)
+    {
+        <StepsListComponent Steps="Recipe.Steps" />
+    }
+}
+@code {
+    [Parameter]
+    public string RecipeId { get; set; } = "";
+
+    private Recipe Recipe { get; set; }
+
+    private bool CanShowStepsWizards = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (int.TryParse(RecipeId, out int recipeId))
+        {
+            Recipe = await Query.Get(recipeId);
+
+            CanShowStepsWizards = Flags.IsRecipeStepsWizardEnabled();
+        }
+    }
+}
