@@ -31,6 +31,9 @@ else
     <h2>Steps</h2>
     @if (CanShowStepsWizards)
     {
+        <StepsListWizardComponent Steps="Recipe.Steps" />
+    }
+    else{
         <StepsListComponent Steps="Recipe.Steps" />
     }
 }

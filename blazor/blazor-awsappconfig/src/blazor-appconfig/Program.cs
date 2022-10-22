@@ -8,11 +8,20 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient
-{    
+{
     BaseAddress = new Uri(builder.Configuration["Backend:FlagsApiUrl"] ?? throw new ArgumentNullException("Configuration"))
 });
 
+builder.Services.AddScoped<FlagsService>();
+builder.Services.AddSingleton<FlagsStorageService>();
 builder.Services.AddSingleton<RecipesQuery>();
-builder.Services.AddScoped<FlagsStorageService>();
 
-await builder.Build().RunAsync();
+var host = builder.Build();
+var flagStorage = host.Services.GetService<FlagsStorageService>();
+var flagService = host.Services.GetService<FlagsService>();
+if (flagService is not null && flagStorage is not null)
+{
+    flagStorage.Init(await flagService.GetFlags());
+}
+
+await host.RunAsync();
