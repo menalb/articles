@@ -1,0 +1,16 @@
+﻿<ul class="list-group">
+    @foreach (var recipie in RecipesList)
+    {
+        <li class="list-group-item">
+
+            <NavLink title="@recipie.Id" class="nav-link" href=@($"recipe/{recipie.Id}")>
+                @recipie.Id - @recipie.Name
+            </NavLink>
+        </li>
+    }
+</ul>
+
+@code {
+    [Parameter]
+    public IEnumerable<Recipe> RecipesList { get; set; } = new List<Recipe>();
+}

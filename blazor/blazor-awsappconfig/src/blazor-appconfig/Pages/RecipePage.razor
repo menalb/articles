@@ -2,7 +2,7 @@
 @using blazor_appconfig.Components
 @using blazor_appconfig.Services
 @inject RecipesQuery Query;
-@inject FlagsStorageService Flags;
+@inject AppConfigurationStorageService Configuration;
 
 <PageTitle>Recipes</PageTitle>
 
@@ -51,7 +51,7 @@ else
         {
             Recipe = await Query.Get(recipeId);
 
-            CanShowStepsWizards = Flags.IsRecipeStepsWizardEnabled();
+            CanShowStepsWizards = Configuration.IsRecipeStepsWizardEnabled();
         }
     }
 }

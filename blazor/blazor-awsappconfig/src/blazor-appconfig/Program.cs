@@ -12,16 +12,17 @@ builder.Services.AddScoped(sp => new HttpClient
     BaseAddress = new Uri(builder.Configuration["Backend:FlagsApiUrl"] ?? throw new ArgumentNullException("Configuration"))
 });
 
-builder.Services.AddScoped<FlagsService>();
-builder.Services.AddSingleton<FlagsStorageService>();
+builder.Services.AddScoped<AppConfigurationService>();
+builder.Services.AddSingleton<AppConfigurationStorageService>();
 builder.Services.AddSingleton<RecipesQuery>();
 
 var host = builder.Build();
-var flagStorage = host.Services.GetService<FlagsStorageService>();
-var flagService = host.Services.GetService<FlagsService>();
-if (flagService is not null && flagStorage is not null)
+var storage = host.Services.GetService<AppConfigurationStorageService>();
+var service = host.Services.GetService<AppConfigurationService>();
+if (service is not null && storage is not null)
 {
-    flagStorage.Init(await flagService.GetFlags());
+    var config = await service.GetConfiguration();
+    storage.Init(config);
 }
 
 await host.RunAsync();

@@ -1,0 +1,52 @@
+﻿
+<RecipesListComponent RecipesList="Recipes" />
+
+<div>
+    <button class="btn btn-primary" disabled="@(!canMovePrev)" @onclick="Prev">Prev</button>
+    <button class="btn btn-primary" disabled="@(!canMoveNext)" @onclick="Next">Next</button>
+</div>
+
+@code {
+    [Parameter]
+    public IEnumerable<Recipe> RecipesList { get; set; } = new List<Recipe>();
+    [Parameter]
+    public int PageSize { get; set; } = 10;
+
+    private IEnumerable<Recipe> Recipes { get; set; } = new List<Recipe>();
+
+    private int CurrentPage = 1;
+    private bool canMovePrev = true;
+    private bool canMoveNext = true;
+
+    protected override void OnInitialized()
+    {
+        Recipes = RecipesList.Take(PageSize);
+        EvaluateNextPrev();
+    }
+
+    private void Next()
+    {
+        Recipes = RecipesList
+        .Skip(PageSize * CurrentPage)
+        .Take(PageSize);
+        CurrentPage++;
+
+        EvaluateNextPrev();
+    }
+
+    private void Prev()
+    {
+        CurrentPage--;
+        Recipes = RecipesList
+        .Skip(PageSize * (CurrentPage - 1))
+        .Take(PageSize);
+
+        EvaluateNextPrev();
+    }
+
+    private void EvaluateNextPrev()
+    {
+        canMoveNext = CurrentPage < (Math.Ceiling((double)RecipesList.Count() / PageSize));
+        canMovePrev = CurrentPage > 1;
+    }
+}

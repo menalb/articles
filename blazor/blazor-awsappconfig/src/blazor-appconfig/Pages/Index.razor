@@ -1,20 +1,27 @@
 ﻿@page "/"
+@using blazor_appconfig.Components
+@using blazor_appconfig.Services
+@inject RecipesQuery Query
+@inject AppConfigurationStorageService StorageConfig;
 
 <PageTitle>Recepies</PageTitle>
 
 <h1>All Recpes</h1>
 
-<ul class="list-group">
-@foreach (var recipie in Recipes)
+@if (StorageConfig.IsPaginationEnabled())
 {
-    <li class="list-group-item">
-        <NavLink title="@recipie.Id" class="nav-link" href=@($"recipe/{recipie.Id}")>
-            @recipie.Name
-        </NavLink>
-    </li>
+    <PagedRecipesListComponent RecipesList="Recipes" PageSize="StorageConfig.Configuration.PageSize" />
 }
-</ul>
+else
+{
+    <RecipesListComponent RecipesList="Recipes" />
+}
 
 @code {
-    private IEnumerable<Recipe> Recipes { get; set; } = DB.Recipes;
+    private IEnumerable<Recipe> Recipes = new List<Recipe>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Recipes = await Query.GetAll();
+    }
 }
