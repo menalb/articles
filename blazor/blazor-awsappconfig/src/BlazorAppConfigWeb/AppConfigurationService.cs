@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Json;
 
-namespace blazor_appconfig.Services;
+namespace BlazorAppConfigWeb.Services;
 
 public class AppConfigurationService
 {

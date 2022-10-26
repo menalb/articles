@@ -1,0 +1,33 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
+Description: Http Api
+
+Resources:
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+
+  BlazorAppConfigFunction:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Handler: "BlazorAppConfigFunction::BlazorAppConfigFunction.Function::FunctionHandler"
+      Runtime: dotnet6
+      CodeUri: ""
+      Description: Handle Notify result
+      MemorySize: 256
+      Timeout: 600
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /config
+            Method: get
+            ApiId: !Ref HttpApi
+Outputs:
+  HttpApiUrl:
+    Description: URL of your API endpoint
+    Value:
+      Fn::Sub: 'https://${HttpApi}.execute-api.${AWS::Region}/'
+  HttpApiId:
+    Description: Api id of HttpApi
+    Value:
+      Ref: HttpApi

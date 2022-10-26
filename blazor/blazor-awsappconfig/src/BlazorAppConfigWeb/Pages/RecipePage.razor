@@ -1,6 +1,6 @@
 ﻿@page "/recipe/{RecipeId}"
-@using blazor_appconfig.Components
-@using blazor_appconfig.Services
+@using BlazorAppConfigWeb.Components
+@using BlazorAppConfigWeb.Services
 @inject RecipesQuery Query;
 @inject AppConfigurationStorageService Configuration;
 
@@ -41,7 +41,7 @@ else
     [Parameter]
     public string RecipeId { get; set; } = "";
 
-    private Recipe Recipe { get; set; }
+    private Recipe? Recipe { get; set; }
 
     private bool CanShowStepsWizards = false;
 
