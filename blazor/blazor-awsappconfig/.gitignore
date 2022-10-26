@@ -351,3 +351,5 @@ MigrationBackup/
 
 cdk.out/
 appsettings.Development.json
+.aws-sam/
+*.toml
