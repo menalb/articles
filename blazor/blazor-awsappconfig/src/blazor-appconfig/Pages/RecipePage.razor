@@ -51,7 +51,7 @@ else
         {
             Recipe = await Query.Get(recipeId);
 
-            CanShowStepsWizards = Configuration.IsRecipeStepsWizardEnabled();
+            CanShowStepsWizards = Configuration.FeaturesConfiguration.IsStepsListWizardEnabled;
         }
     }
 }

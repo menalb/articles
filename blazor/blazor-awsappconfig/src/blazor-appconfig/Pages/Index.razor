@@ -8,9 +8,9 @@
 
 <h1>All Recpes</h1>
 
-@if (StorageConfig.IsPaginationEnabled())
+@if (StorageConfig.FeaturesConfiguration.IsPagedRecipesEnabled)
 {
-    <PagedRecipesListComponent RecipesList="Recipes" PageSize="StorageConfig.Configuration.PageSize" />
+    <PagedRecipesListComponent RecipesList="Recipes" PageSize="StorageConfig.FeaturesConfiguration.RecipesListPageSize" />
 }
 else
 {

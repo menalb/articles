@@ -6,14 +6,9 @@ public class AppConfigurationStorageService
     {
         if (config != null)
         {
-            Configuration = config;
+            FeaturesConfiguration = config;
         }
     }
 
-    public AppConfiguration Configuration { get; private set; } = new AppConfiguration(10, new List<string>());
-
-    public bool IsRecipeStepsWizardEnabled()
-     => Configuration.Features.Any(f => f == nameof(Components.StepsListWizardComponent));
-    public bool IsPaginationEnabled()
-     => Configuration.Features.Any(f => f == "Pagination");
+    public AppConfiguration FeaturesConfiguration { get; private set; } = new AppConfiguration(false, false, 10);
 }

@@ -16,13 +16,14 @@ public class AppConfigurationService
         var config = await _http.GetFromJsonAsync<AppConfigurationResponse>("flags");
         if (config != null)
         {
-            return new(config.PageSize, config.Features.Select(f =>f.Name));
+            return new(config.StepsListWizard.Enabled, config.PagedRecipesList.Enabled, config.PagedRecipesList.PageSize);
         }
-        return new (10,new List<string>());
+        return new (false,false,10);
     }
     record FeatureResponse(string Name);
-
-    record AppConfigurationResponse(int PageSize, IEnumerable<FeatureResponse> Features);
+    record AppConfigurationResponse(PagedRecipesList PagedRecipesList, Feature StepsListWizard);
+    record PagedRecipesList(int PageSize, bool Enabled) : Feature(Enabled);
+    record Feature(bool Enabled);
 }
 
-public record AppConfiguration(int PageSize, IEnumerable<string> Features);
+public record AppConfiguration(bool IsStepsListWizardEnabled,bool IsPagedRecipesEnabled, int RecipesListPageSize);
