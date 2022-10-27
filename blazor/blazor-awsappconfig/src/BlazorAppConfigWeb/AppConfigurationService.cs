@@ -13,7 +13,7 @@ public class AppConfigurationService
 
     public async Task<AppConfiguration> GetConfiguration()
     {
-        var config = await _http.GetFromJsonAsync<AppConfigurationResponse>("flags");
+        var config = await _http.GetFromJsonAsync<AppConfigurationResponse>("config");
         if (config != null)
         {
             return new(config.StepsListWizard.Enabled, config.PagedRecipesList.Enabled, config.PagedRecipesList.PageSize);

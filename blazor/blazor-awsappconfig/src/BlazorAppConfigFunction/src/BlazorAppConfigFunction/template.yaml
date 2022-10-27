@@ -2,6 +2,20 @@ AWSTemplateFormatVersion: "2010-09-09"
 Transform: "AWS::Serverless-2016-10-31"
 Description: Http Api
 
+Parameters:
+  AppConfigAppId:
+    Type: String
+    Description: AppConfig Application Id
+  AppConfigAppEnvironmentId:
+    Type: String
+    Description: AppConfig Application Environment Id
+  AppConfigtId:
+    Type: String
+    Description: AppConfig Id
+  BlazorConfigPath:
+    Type: String
+    Description: config path in AppConfig
+    
 Resources:
   HttpApi:
     Type: AWS::Serverless::HttpApi
@@ -15,6 +29,19 @@ Resources:
       Description: Handle Notify result
       MemorySize: 256
       Timeout: 600
+      Layers:
+        - !Sub arn:aws:lambda:${AWS::Region}:434848589818:layer:AWS-AppConfig-Extension:82
+      Policies:        
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - appconfig:GetLatestConfiguration
+                - appconfig:StartConfigurationSession
+              Resource: !Sub 'arn:aws:appconfig:${AWS::Region}:${AWS::AccountId}:application/${AppConfigAppId}/environment/${AppConfigAppEnvironmentId}/configuration/${AppConfigtId}'
+      Environment:
+        Variables:
+          BLAZOR_CONFIG_PATH: !Ref BlazorConfigPath   
       Events:
         ApiEvent:
           Type: HttpApi
