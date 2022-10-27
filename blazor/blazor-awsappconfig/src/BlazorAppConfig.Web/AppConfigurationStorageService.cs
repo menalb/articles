@@ -1,4 +1,4 @@
-﻿namespace BlazorAppConfigWeb.Services;
+﻿namespace BlazorAppConfig.Web.Services;
 
 public class AppConfigurationStorageService
 {

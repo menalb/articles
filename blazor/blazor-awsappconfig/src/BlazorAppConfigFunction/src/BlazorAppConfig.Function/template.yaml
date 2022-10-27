@@ -23,7 +23,7 @@ Resources:
   BlazorAppConfigFunction:
     Type: "AWS::Serverless::Function"
     Properties:
-      Handler: "BlazorAppConfigFunction::BlazorAppConfigFunction.Function::FunctionHandler"
+      Handler: "BlazorAppConfig.Function::BlazorAppConfig.Function.Function::FunctionHandler"
       Runtime: dotnet6
       CodeUri: ""
       Description: Handle Notify result

@@ -12,6 +12,6 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\BlazorAppConfigFunction\BlazorAppConfigFunction.csproj" />
+    <ProjectReference Include="..\..\src\BlazorAppConfig.Function\BlazorAppConfig.Function.csproj" />
   </ItemGroup>
 </Project>

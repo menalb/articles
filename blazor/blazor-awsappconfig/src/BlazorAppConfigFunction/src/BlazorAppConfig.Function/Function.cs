@@ -2,11 +2,12 @@ using System.Net;
 using System.Net.Http.Json;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
+using BlazorAppConfig.Shared;
 
 // Assembly attribute to enable the Lambda function's JSON input to be converted into a .NET class.
 [assembly: LambdaSerializer(typeof(Amazon.Lambda.Serialization.SystemTextJson.DefaultLambdaJsonSerializer))]
 
-namespace BlazorAppConfigFunction;
+namespace BlazorAppConfig.Function;
 
 public class Function
 {
@@ -21,9 +22,6 @@ public class Function
     /// <returns></returns>
     public async Task<APIGatewayProxyResponse> FunctionHandler(APIGatewayProxyRequest request, ILambdaContext context)
     {
-
-        await Task.CompletedTask;
-
         var config = await GetConfiguration();
 
         string responseBody = "";
@@ -32,10 +30,9 @@ public class Function
             var actualConfig = MapConfiguration(config);
 
             responseBody = System.Text.Json.JsonSerializer.Serialize(actualConfig);
-
         }
 
-        var response = new APIGatewayProxyResponse
+        return new APIGatewayProxyResponse
         {
             StatusCode = (int)HttpStatusCode.OK,
             Body = responseBody,
@@ -46,15 +43,12 @@ public class Function
                      {"Access-Control-Allow-Methods", "*"},
                 }
         };
-
-        return response;
     }
 
     private FeaturesConfiguration MapConfiguration(FeaturesResponse feature)
     {
         return new FeaturesConfiguration(feature.StepsListWizardComponent, new(feature.Pagination.Number, feature.Pagination.Enabled));
-    }
-    private record FeaturesConfiguration(Feature StepsListWizard, PaginationFeature PagedRecipesList);
+    }    
 
     private async Task<FeaturesResponse?> GetConfiguration()
     {
@@ -73,10 +67,7 @@ public class Function
         }
         return null;
     }
-
-    private record Feature(bool Enabled);    
-    private record PaginationAppConfigFeature(bool Enabled, int Number);
-    private record FeaturesResponse(Feature StepsListWizardComponent, PaginationAppConfigFeature Pagination);
     
-    private record PaginationFeature(int PageSize, bool Enabled);
+    private record PaginationAppConfigFeature(bool Enabled, int Number);
+    private record FeaturesResponse(Feature StepsListWizardComponent, PaginationAppConfigFeature Pagination);       
 }
