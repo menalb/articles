@@ -12,7 +12,7 @@ Parameters:
   AppConfigtId:
     Type: String
     Description: AppConfig Id
-  BlazorConfigPath:
+  RecipeConfigPath:
     Type: String
     Description: config path in AppConfig
     
@@ -26,7 +26,7 @@ Resources:
       Handler: "BlazorAppConfig.Function::BlazorAppConfig.Function.Function::FunctionHandler"
       Runtime: dotnet6
       CodeUri: ""
-      Description: Handle Notify result
+      Description: Retrieves Recipe Flag configuration
       MemorySize: 256
       Timeout: 600
       Layers:
@@ -41,7 +41,7 @@ Resources:
               Resource: !Sub 'arn:aws:appconfig:${AWS::Region}:${AWS::AccountId}:application/${AppConfigAppId}/environment/${AppConfigAppEnvironmentId}/configuration/${AppConfigtId}'
       Environment:
         Variables:
-          BLAZOR_CONFIG_PATH: !Ref BlazorConfigPath   
+          RECIPE_CONFIG_PATH: !Ref RecipeConfigPath
       Events:
         ApiEvent:
           Type: HttpApi
