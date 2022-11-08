@@ -6,7 +6,7 @@
 
 <PageTitle>Recipes</PageTitle>
 
-<NavLink title="Back to recipes" class="nav-link" href="/">
+<NavLink title="Back to recipes" class="text-blue-500" href="/">
     Back
 </NavLink>
 
@@ -16,10 +16,10 @@
 }
 else
 {
-    <h1>@Recipe.Name</h1>
+    <h1 class="font-extrabold text-5xl tracking-wide mb-6">@Recipe.Name</h1>
 
-    <h2>Ingredients</h2>
-    <ul>
+    <h2 class="font-extrabold text-2xl tracking-wide mb-6">Ingredients</h2>
+    <ul class="list-disc mb-6 ml-4">
         @foreach (var ingredient in Recipe.Ingredients)
         {
             <li>
@@ -28,8 +28,8 @@ else
         }
     </ul>
 
-    <h2>Steps</h2>
-    @if (CanShowStepsWizards)
+    <h2 class="font-extrabold text-2xl tracking-wide mb-6">Steps</h2>
+    @if (ShowStepsWizards)
     {
         <StepsListWizardComponent Steps="Recipe.Steps" />
     }
@@ -43,7 +43,7 @@ else
 
     private Recipe? Recipe { get; set; }
 
-    private bool CanShowStepsWizards = false;
+    private bool ShowStepsWizards = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -51,7 +51,7 @@ else
         {
             Recipe = await Query.Get(recipeId);
 
-            CanShowStepsWizards = Configuration.FeaturesConfiguration.IsStepsListWizardEnabled;
+            ShowStepsWizards = Configuration.FeaturesConfiguration.IsStepsListWizardEnabled;
         }
     }
 }
