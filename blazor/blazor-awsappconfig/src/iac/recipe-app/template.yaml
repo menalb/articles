@@ -1,0 +1,121 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: "AWS::Serverless-2016-10-31"
+Description: Http Api
+
+
+Parameters:
+  AppConfigAppName:
+    Type: String
+    Description: AppConfig Application Name
+  AppConfigAppEnvironmentName:
+    Type: String
+    Description: AppConfig Application Environment Name
+  AppConfigName:
+    Type: String
+    Description: AppConfig Name
+
+Resources:
+  
+  RecipeApplication:
+      Type: AWS::AppConfig::Application
+      Properties:
+        Name: !Ref AppConfigAppName
+  
+  Environment:
+    Type: AWS::AppConfig::Environment
+    Properties:
+      Name: !Ref AppConfigAppEnvironmentName
+      ApplicationId: !Ref RecipeApplication
+
+  RecipeAppConfigurationProfile:
+    Type: AWS::AppConfig::ConfigurationProfile
+    Properties:
+      ApplicationId: !Ref RecipeApplication
+      Name: !Ref AppConfigName
+      Type: "AWS.AppConfig.FeatureFlags"
+      LocationUri: "hosted"
+  
+  MyDeploymentStrategy:
+    Type: AWS::AppConfig::DeploymentStrategy
+    Properties:
+      Name: "MyTestDeploymentStrategy"
+      Description: "A deployment strategy to deploy the config immediately"
+      DeploymentDurationInMinutes: 0
+      FinalBakeTimeInMinutes: 0
+      GrowthFactor: 100
+      GrowthType: LINEAR
+      ReplicateTo: NONE
+  
+  BasicHostedConfigurationVersion:
+    Type: AWS::AppConfig::HostedConfigurationVersion
+    Properties:
+      ApplicationId: !Ref RecipeApplication
+      ConfigurationProfileId: !Ref RecipeAppConfigurationProfile
+      Description: 'A sample hosted configuration version'
+      ContentType: 'application/json'
+      Content: '{"version":"1","flags":{"recipePagination":{"name":"RecipePagination","attributes":{"pageSize":{"constraints":{"type":"number","required":false,"minimum":5,"maximum":10}}}},"wizardRecipeSteps":{"name":"WizardRecipeSteps"}},"values":{"recipePagination":{"enabled":true,"pageSize":5},"wizardRecipeSteps":{"enabled":true}}}'
+
+  AppConfigDeployment:
+    Type: AWS::AppConfig::Deployment
+    Properties:
+      ApplicationId: !Ref RecipeApplication
+      ConfigurationProfileId: !Ref RecipeAppConfigurationProfile
+      ConfigurationVersion: !Ref BasicHostedConfigurationVersion
+      DeploymentStrategyId: !Ref MyDeploymentStrategy
+      EnvironmentId: !Ref Environment
+  
+  HttpApi:
+    Type: AWS::Serverless::HttpApi
+
+  BlazorAppConfigFunction:
+    Type: "AWS::Serverless::Function"
+    Properties:
+      Handler: "BlazorAppConfig.Function::BlazorAppConfig.Function.Function::FunctionHandler"
+      Runtime: dotnet6
+      CodeUri: "../../BlazorAppConfigFunction/src/BlazorAppConfig.Function"
+      Description: Retrieves Recipe Flag configuration
+      MemorySize: 256
+      Timeout: 600
+      Layers:
+        - !Sub arn:aws:lambda:${AWS::Region}:434848589818:layer:AWS-AppConfig-Extension:82
+      Policies:        
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - appconfig:GetLatestConfiguration
+                - appconfig:StartConfigurationSession
+              Resource: !Sub 'arn:aws:appconfig:${AWS::Region}:${AWS::AccountId}:application/${RecipeApplication}/environment/${Environment}/configuration/${RecipeAppConfigurationProfile}'
+      Environment:
+        Variables:
+          RECIPE_CONFIG_PATH: !Sub '/applications/${AppConfigAppName}/environments/${AppConfigAppEnvironmentName}/configurations/${AppConfigName}'
+      Events:
+        ApiEvent:
+          Type: HttpApi
+          Properties:
+            Path: /config
+            Method: get
+            ApiId: !Ref HttpApi
+
+Outputs:
+  RecipeApplication:
+    Description: RecipeApplication Id
+    Value: !Ref RecipeApplication
+  Environment:
+    Description: Environment
+    Value: !Ref Environment
+  RecipeAppConfigurationProfile:
+    Description: RecipeAppConfigurationProfile
+    Value: !Ref RecipeAppConfigurationProfile
+  RecipeConfigPath:
+    Description: RecipeConfigPath
+    Value: !Sub '/applications/${AppConfigAppName}/environments/${AppConfigAppEnvironmentName}/configurations/${AppConfigName}'
+  HttpApiUrl:
+    Description: URL of your API endpoint
+    Value:
+      Fn::Sub: 'https://${HttpApi}.execute-api.${AWS::Region}.amazonaws.com/'
+  HttpApiId:
+    Description: Api id of HttpApi
+    Value:
+      Ref: HttpApi
+ 
